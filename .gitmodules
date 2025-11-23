@@ -1,0 +1,3 @@
+[submodule "docker/ml102_workshop"]
+	path = docker/ml102_workshop
+	url = https://github.com/nesi/ml102_workshop.git

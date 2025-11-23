@@ -1,0 +1,52 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ml102-test
+  namespace: kai-test
+  labels:
+    kai.scheduler/queue: research
+    priorityClassName: inference
+    app: jupyterlab
+  annotations:
+    gpu-fraction: "0.45"
+spec:
+  containers:
+    - name: jupyter
+      image: cdjs/ml102:old
+      imagePullPolicy: Always
+      ports:
+        - containerPort: 8888
+      args:
+        - jupyter
+        - lab
+        - "--ip=0.0.0.0"
+        - "--port=8888"
+        - "--no-browser"
+        - "--ServerApp.token=''"
+        - "--ServerApp.password=''"
+        - "--NotebookApp.token=''"
+        - "--NotebookApp.password=''"
+        - "--ServerApp.allow_origin='*'"
+        - "--ServerApp.allow_remote_access=True"
+        - "--ServerApp.disable_check_xsrf=True"
+        - "--allow-root"
+        - "--ServerApp.root_dir=/opt/ml102_workshop"
+      env:
+        - name: TZ
+          value: Pacific/Auckland
+      resources:
+        requests:
+          cpu: "4"
+          memory: "8Gi"
+        limits:
+          cpu: "4"
+          memory: "8Gi"
+      volumeMounts:
+        - name: mps
+          mountPath: /run/nvidia/mps
+  volumes:
+    - name: mps
+      hostPath:
+        path: /run/nvidia/mps
+        type: DirectoryOrCreate
