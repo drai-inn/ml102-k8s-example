@@ -1,6 +1,7 @@
-# One of the datasets is no longer downloadable so need to copy it from an old image
+# One of the datasets is no longer downloadable so need to copy it from an old NeSI image
 FROM ghcr.io/nesi/training-environment-jupyter-ml102-app:v0.3.0 AS source
 
+# GPU enabled tensorflow image
 # Using an older version as ML102 notebooks haven't been updated in a long time
 FROM nvcr.io/nvidia/tensorflow:24.01-tf2-py3
 
@@ -22,15 +23,12 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
 
 ENV LANG=en_NZ.UTF-8
 
-# Copy the cats_and_dogs_filtered dataset from the source image
+# Copy datasets from the old NeSI image
 COPY --from=source /var/lib/cats_and_dogs_filtered /var/lib/cats_and_dogs_filtered
+COPY --from=source /var/lib/flower_photos /var/lib/flower_photos
 
-# download flower photos
-RUN wget -nv https://storage.googleapis.com/download.tensorflow.org/example_images/flower_photos.tgz \
-    -O /var/lib/flower_photos.tgz \
-    && tar -xzf /var/lib/flower_photos.tgz -C /var/lib \
-    && rm -f /var/lib/flower_photos.tgz \
-    && chown -R root:root /var/lib/flower_photos \
+# ensure good permissions/ownership on datasets
+RUN chown -R root:root /var/lib/flower_photos \
     && chmod -R o+rX /var/lib/flower_photos \
     && chown -R root:root /var/lib/cats_and_dogs_filtered \
     && chmod -R o+rX /var/lib/cats_and_dogs_filtered

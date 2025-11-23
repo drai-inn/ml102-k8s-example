@@ -13,7 +13,7 @@ metadata:
 spec:
   containers:
     - name: jupyter
-      image: cdjs/ml102:old
+      image: ghcr.io/drai-inn/ml102-k8s-example:latest
       imagePullPolicy: Always
       ports:
         - containerPort: 8888
